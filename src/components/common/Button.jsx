@@ -14,7 +14,7 @@ const Button = ({
   const baseClasses = "flex items-center justify-center font-medium rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background";
   
   const variants = {
-    primary: "bg-primary text-background hover:bg-opacity-90 focus:ring-primary shadow-[0_0_15px_rgba(102,252,241,0.2)] hover:shadow-[0_0_20px_rgba(102,252,241,0.4)]",
+    primary: "bg-primary text-background hover:bg-opacity-90 focus:ring-primary shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]",
     secondary: "bg-surface border border-border text-textPrimary hover:bg-card focus:ring-border",
     danger: "bg-red-500 text-white hover:bg-red-600 focus:ring-red-500",
     ghost: "bg-transparent text-textPrimary hover:bg-surface focus:ring-surface"

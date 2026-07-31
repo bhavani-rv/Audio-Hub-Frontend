@@ -47,7 +47,7 @@ const Login = () => {
   };
 
   return (
-    <AuthLayout title="Welcome Back" subtitle="Sign in to your Headset Hub account">
+    <AuthLayout title="Welcome Back" subtitle="Sign in to your Audio Hub account">
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           id="username"

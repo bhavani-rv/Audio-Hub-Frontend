@@ -89,8 +89,8 @@ const Register = () => {
   };
 
   return (
-    <AuthLayout title="Create Account" subtitle="Join Headset Hub for premium sound">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthLayout title="Create Account" subtitle="Join Audio Hub for premium sound">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           id="fullName"
           label="Full Name"

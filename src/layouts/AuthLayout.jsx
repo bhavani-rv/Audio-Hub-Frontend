@@ -19,7 +19,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
             <FiHeadphones className="text-2xl text-primary" />
           </motion.div>
           <span className="text-2xl font-bold tracking-tight text-textPrimary">
-            Headset<span className="text-primary">Hub</span>
+            Audio<span className="text-primary">Hub</span>
           </span>
         </Link>
         

@@ -4,16 +4,16 @@
   --color-background: #0B0C10;
   --color-surface: #161B22;
   --color-card: #1F2833;
-  --color-primary: #66FCF1;
-  --color-accent: #833AB4;
-  --color-text-primary: #F5F5F7;
-  --color-text-secondary: #B0B8C1;
+  --color-primary: #F59E0B; /* Premium Amber/Gold */
+  --color-accent: #E11D48; /* Rose */
+  --color-text-primary: #FFFBEB; /* Warm off-white */
+  --color-text-secondary: #A1A1AA; /* Zinc 400 */
   --color-border: rgba(255, 255, 255, 0.08);
 
   --font-sans: "Inter", "Poppins", sans-serif;
 
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 15px rgba(102, 252, 241, 0.4);
+  --shadow-glow: 0 0 15px rgba(245, 158, 11, 0.4); /* Amber glow */
 }
 
 @layer base {

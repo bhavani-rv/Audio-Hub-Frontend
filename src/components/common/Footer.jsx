@@ -12,7 +12,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <FiHeadphones className="text-2xl text-primary" />
               <span className="text-2xl font-bold tracking-tight text-textPrimary">
-                Headset<span className="text-primary">Hub</span>
+                Audio<span className="text-primary">Hub</span>
               </span>
             </Link>
             <p className="text-textSecondary mb-6 max-w-sm">
@@ -67,7 +67,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-textSecondary">
-          <p>&copy; {new Date().getFullYear()} Headset Hub. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Audio Hub. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex space-x-4">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all" />
             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all" />

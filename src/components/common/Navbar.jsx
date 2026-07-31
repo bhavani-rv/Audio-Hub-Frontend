@@ -42,7 +42,7 @@ const Navbar = () => {
               <FiHeadphones className="text-xl text-primary" />
             </div>
             <span className="text-xl font-bold tracking-tight text-textPrimary hidden sm:block">
-              Headset<span className="text-primary">Hub</span>
+              Audio<span className="text-primary">Hub</span>
             </span>
           </Link>
 
@@ -84,7 +84,7 @@ const Navbar = () => {
                   {isAuthenticated ? (
                     <p className="text-sm text-textPrimary font-medium truncate">{user?.name || 'User'}</p>
                   ) : (
-                    <p className="text-sm text-textSecondary">Welcome to Headset Hub</p>
+                    <p className="text-sm text-textSecondary">Welcome to Audio Hub</p>
                   )}
                 </div>
                 <div className="py-2">
