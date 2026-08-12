@@ -5,11 +5,32 @@ import { FiArrowRight, FiShield, FiTruck, FiCreditCard, FiHeadphones, FiHeart, F
 import Button from '../components/common/Button';
 import productService from '../services/productService';
 import categoryService from '../services/categoryService';
+import cartService from '../services/cartService';
+import { useWishlist } from '../context/WishlistContext';
+import { toast } from 'react-toastify';
 import { mockBrands, mockTestimonials } from '../data/mockData';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const handleAddToCart = async (e, productId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await cartService.addToCart(productId, 1);
+      toast.success('Added to cart!');
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to add to cart. Please log in.');
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +43,8 @@ const Home = () => {
         setCategories(categoriesData);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -29,7 +52,7 @@ const Home = () => {
 
   const features = [
     { icon: FiShield, title: 'Premium Quality', desc: 'Authentic products guaranteed' },
-    { icon: FiTruck, title: 'Fast Delivery', desc: 'Free shipping on orders over $100' },
+    { icon: FiTruck, title: 'Fast Delivery', desc: 'Free shipping on orders over ₹1000' },
     { icon: FiCreditCard, title: 'Secure Payments', desc: '256-bit encrypted checkout' },
     { icon: FiHeadphones, title: '24×7 Support', desc: 'Dedicated audio experts' }
   ];
@@ -51,7 +74,7 @@ const Home = () => {
                 Experience <span className="text-primary">Premium Sound</span> Like Never Before
               </h1>
               <p className="text-lg text-textSecondary mb-8 max-w-xl">
-                Discover our curated collection of audiophile-grade gear. Elevate your gaming, studio work, and daily listening with uncompromised audio quality.
+                Discover our curated collection of audiophile-grade headsets. Elevate your gaming, studio work, and daily listening with uncompromised audio quality.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/shop">
@@ -76,7 +99,7 @@ const Home = () => {
               <div className="relative rounded-2xl overflow-hidden aspect-square max-w-md mx-auto shadow-glow">
                 <img 
                   src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800" 
-                  alt="Premium Audio Gear" 
+                  alt="Premium Headset" 
                   className="object-cover w-full h-full"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
@@ -92,7 +115,7 @@ const Home = () => {
           <div className="flex justify-between items-end mb-10">
             <div>
               <h2 className="text-3xl font-bold text-textPrimary">Shop by Category</h2>
-              <p className="text-textSecondary mt-2">Find the perfect audio gear for your needs</p>
+              <p className="text-textSecondary mt-2">Find the perfect headset for your needs</p>
             </div>
             <Link to="/categories" className="hidden sm:flex text-primary hover:text-primary/80 items-center gap-1 font-medium">
               View All <FiArrowRight />
@@ -100,26 +123,33 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {categories.slice(0, 5).map((category, index) => (
-              <motion.div 
-                key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative rounded-xl overflow-hidden cursor-pointer"
-              >
-                <div className="aspect-[4/5] w-full">
-                  <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent flex flex-col justify-end p-6">
-                  <h3 className="text-xl font-bold text-textPrimary mb-1">{category.name}</h3>
-                  <p className="text-sm text-textSecondary opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
-                    {category.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+            {categories.slice(0, 5).map((category, index) => {
+              const id = category.categoryId || category.id;
+              const name = category.categoryName || category.name;
+              const image = category.image || `https://via.placeholder.com/400x500?text=${encodeURIComponent(name)}`;
+              const description = category.description || `Explore our ${name} collection`;
+
+              return (
+                <motion.div 
+                  key={id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative rounded-xl overflow-hidden cursor-pointer"
+                >
+                  <div className="aspect-[4/5] w-full">
+                    <img src={image} alt={name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent flex flex-col justify-end p-6">
+                    <h3 className="text-xl font-bold text-textPrimary mb-1">{name}</h3>
+                    <p className="text-sm text-textSecondary opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0">
+                      {description}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -129,41 +159,60 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-textPrimary">Featured Products</h2>
-            <p className="text-textSecondary mt-2">Handpicked selection of our top-rated audio equipment</p>
+            <p className="text-textSecondary mt-2">Handpicked selection of our top-rated headsets</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, index) => (
-              <motion.div 
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors group"
-              >
-                <div className="relative aspect-square overflow-hidden bg-surface p-4">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-contain mix-blend-screen group-hover:scale-105 transition-transform duration-500" />
-                  <button className="absolute top-4 right-4 w-10 h-10 bg-background/80 backdrop-blur rounded-full flex items-center justify-center text-textSecondary hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
-                    <FiHeart />
-                  </button>
-                </div>
-                <div className="p-5">
-                  <p className="text-xs text-primary font-medium mb-1">{product.brand}</p>
-                  <h3 className="text-lg font-bold text-textPrimary mb-1 truncate">{product.name}</h3>
-                  <div className="flex items-center gap-1 mb-4">
-                    <FiStar className="text-yellow-500 fill-yellow-500 text-sm" />
-                    <span className="text-sm text-textSecondary">{product.rating}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-textPrimary">${product.price}</span>
-                    <button className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-textPrimary hover:bg-primary hover:text-background transition-colors shadow-soft">
-                      <FiShoppingCart />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            {featuredProducts.map((product, index) => {
+              const id = product.productId || product.id;
+              const image = (product.imageUrls && product.imageUrls.length > 0) 
+                            ? product.imageUrls[0] 
+                            : product.image || 'https://via.placeholder.com/300?text=No+Image';
+              const brand = product.categoryName || product.brand || 'Audio Hub';
+              const rating = product.rating || 5.0;
+
+              return (
+                <motion.div 
+                  key={id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors group flex flex-col h-full"
+                >
+                  <Link to={`/product/${id}`} className="flex flex-col h-full">
+                    <div className="relative aspect-square overflow-hidden bg-surface p-4 flex items-center justify-center">
+                      <img src={image} alt={product.name} className="w-full h-full object-contain mix-blend-screen group-hover:scale-105 transition-transform duration-500" />
+                      <button 
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
+                        className={`absolute top-4 right-4 w-10 h-10 bg-background/80 backdrop-blur rounded-full flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 ${
+                          isInWishlist(id) ? 'text-red-500' : 'text-textSecondary hover:text-red-500'
+                        }`}
+                      >
+                        <FiHeart className={isInWishlist(id) ? 'fill-red-500' : ''} />
+                      </button>
+                    </div>
+                    <div className="p-5 flex flex-col flex-grow">
+                      <p className="text-xs text-primary font-medium mb-1">{brand}</p>
+                      <h3 className="text-lg font-bold text-textPrimary mb-1 truncate">{product.name}</h3>
+                      <div className="flex items-center gap-1 mb-4 mt-auto">
+                        <FiStar className="text-yellow-500 fill-yellow-500 text-sm" />
+                        <span className="text-sm text-textSecondary">{rating}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold text-textPrimary">₹{product.price}</span>
+                        <button 
+                          onClick={(e) => handleAddToCart(e, id)}
+                          className="w-10 h-10 bg-surface border border-border rounded-full flex items-center justify-center text-textPrimary hover:bg-primary hover:text-background hover:border-primary transition-all duration-300 shadow-soft"
+                        >
+                          <FiShoppingCart />
+                        </button>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
           
           <div className="mt-12 text-center">
