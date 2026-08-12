@@ -31,7 +31,7 @@ const authService = {
 
   verifyRegisterOtp: async (data) => {
     // data: { email, otp }
-    const response = await api.post('/auth/register/verify-otp', data);
+    const response = await api.post('/auth/verify-registration-otp', data);
     return response.data;
   },
 

@@ -16,9 +16,7 @@ const Register = () => {
     email: '',
     mobile: '',
     password: '',
-    confirmPassword: '',
-    isAdmin: false,
-    adminSecret: ''
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -58,10 +56,6 @@ const Register = () => {
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-
-    if (formData.isAdmin && !formData.adminSecret) {
-      newErrors.adminSecret = 'Admin Secret Key is required';
-    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,13 +67,10 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      // Step 1: Request Registration OTP
-      // Wait, prompt says: POST /api/auth/register or POST /api/auth/register/request-otp. Let's use request-otp approach as defined in prompt "Backend sends Email OTP. Redirect to verify-registration-otp"
       await authService.register(formData); 
-      // Assuming register initiates the flow and sends OTP
       
       setTempIdentifier(formData.email);
-      toast.success('Registration initiated. Please verify your email.');
+      toast.success('Registration successful! Check your email for OTP.');
       navigate('/verify-registration-otp');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
@@ -175,38 +166,7 @@ const Register = () => {
           </button>
         </div>
 
-        <div className="pt-2 pb-2 border-t border-border mt-4">
-          <div className="flex items-center mb-4">
-            <input
-              id="isAdmin"
-              type="checkbox"
-              className="h-4 w-4 rounded border-border bg-surface text-primary focus:ring-primary focus:ring-offset-background"
-              checked={formData.isAdmin}
-              onChange={handleChange}
-            />
-            <label htmlFor="isAdmin" className="ml-2 block text-sm font-medium text-textPrimary">
-              Register as an Admin
-            </label>
-          </div>
 
-          {formData.isAdmin && (
-            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-              <Input
-                id="adminSecret"
-                label="Admin Secret Key"
-                type="password"
-                placeholder="Enter the secret key"
-                value={formData.adminSecret}
-                onChange={handleChange}
-                error={errors.adminSecret}
-                icon={FiLock}
-              />
-              <p className="text-xs text-textSecondary -mt-2 mb-2">
-                Required for admin privileges. Contact your system administrator if you don't have this.
-              </p>
-            </div>
-          )}
-        </div>
 
         <Button type="submit" fullWidth isLoading={isLoading} className="mt-6">
           Create Account

@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FiHeadphones, FiSearch, FiHeart, FiShoppingCart, FiUser, FiMenu, FiX } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import cartService from '../../services/cartService';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const { isAuthenticated, logout, user } = useAuth();
+  const { wishlist } = useWishlist();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,10 +22,34 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCartCount();
+      // Set up a simple interval to poll cart count or rely on a global state if implemented later.
+      // For now, we'll just fetch it on mount/auth change.
+      const interval = setInterval(fetchCartCount, 10000); // refresh every 10s as a fallback
+      return () => clearInterval(interval);
+    } else {
+      setCartCount(0);
+    }
+  }, [isAuthenticated]);
+
+  const fetchCartCount = async () => {
+    try {
+      const data = await cartService.getCartCount();
+      if (data && typeof data.count === 'number') {
+        setCartCount(data.count);
+      }
+    } catch (err) {
+      // ignore
+    }
+  };
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Categories', path: '/categories' },
     { name: 'Shop', path: '/shop' },
+    { name: 'Orders', path: '/orders' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -63,15 +91,24 @@ const Navbar = () => {
 
           {/* Right Icons */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-textSecondary hover:text-primary transition-colors" aria-label="Search">
+            <Link to="/shop" className="text-textSecondary hover:text-primary transition-colors" aria-label="Search">
               <FiSearch className="text-xl" />
-            </button>
+            </Link>
             <Link to="/wishlist" className="text-textSecondary hover:text-primary transition-colors relative" aria-label="Wishlist">
               <FiHeart className="text-xl" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {wishlist.length}
+                </span>
+              )}
             </Link>
             <Link to="/cart" className="text-textSecondary hover:text-primary transition-colors relative" aria-label="Cart">
               <FiShoppingCart className="text-xl" />
-              <span className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             
             <div className="relative group">
@@ -90,6 +127,11 @@ const Navbar = () => {
                 <div className="py-2">
                   {isAuthenticated ? (
                     <>
+                      {(user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN') && (
+                        <Link to="/admin" className="px-4 py-2 text-sm text-primary hover:bg-surface flex items-center gap-2 font-medium">
+                          <span className="text-yellow-500 text-lg">⚡</span> Admin Panel
+                        </Link>
+                      )}
                       <Link to="/profile" className="block px-4 py-2 text-sm text-textSecondary hover:text-primary hover:bg-surface">Profile</Link>
                       <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-textSecondary hover:text-primary hover:bg-surface">Logout</button>
                     </>
@@ -140,9 +182,21 @@ const Navbar = () => {
               ))}
               <div className="border-t border-border mt-4 pt-4 pb-2">
                 <div className="flex items-center justify-around">
-                  <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="text-textSecondary hover:text-primary"><FiHeart className="text-2xl" /></Link>
+                  <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="text-textSecondary hover:text-primary relative">
+                    <FiHeart className="text-2xl" />
+                    {wishlist.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {wishlist.length}
+                      </span>
+                    )}
+                  </Link>
                   <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="text-textSecondary hover:text-primary relative">
                     <FiShoppingCart className="text-2xl" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-primary text-background text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
                   {isAuthenticated ? (
                     <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="text-textSecondary hover:text-primary"><FiUser className="text-2xl" /></button>

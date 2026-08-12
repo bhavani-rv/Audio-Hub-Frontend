@@ -28,6 +28,10 @@ export const AuthProvider = ({ children }) => {
   const loginSuccess = (token, userData) => {
     localStorage.setItem('jwtToken', token);
     localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Explicitly set jwtToken in cookies so it is visible in DevTools
+    document.cookie = `jwtToken=${token}; path=/; max-age=86400; SameSite=Lax`;
+    
     setUser(userData);
     setIsAuthenticated(true);
     setTempIdentifier('');
@@ -36,6 +40,19 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
+    
+    // Explicitly set all existing cookies to "null" value
+    document.cookie.split(";").forEach((c) => {
+      const cookieName = c.replace(/^ +/, "").split("=")[0];
+      if (cookieName) {
+        document.cookie = `${cookieName}=null; expires=Thu, 01 Jan 2030 00:00:00 UTC; path=/`;
+      }
+    });
+    
+    // Explicitly add jwtToken and user as null in cookies
+    document.cookie = "jwtToken=null; path=/";
+    document.cookie = "user=null; path=/";
+
     setUser(null);
     setIsAuthenticated(false);
     setTempIdentifier('');

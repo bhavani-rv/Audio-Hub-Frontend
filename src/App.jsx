@@ -2,13 +2,16 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import { useAuth } from './context/AuthContext';
 
 // Lazy loading pages for better performance
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/auth/Login'));
+const AdminLogin = lazy(() => import('./pages/auth/AdminLogin'));
 const Register = lazy(() => import('./pages/auth/Register'));
 const VerifyLoginOTP = lazy(() => import('./pages/auth/VerifyLoginOTP'));
 const VerifyRegisterOTP = lazy(() => import('./pages/auth/VerifyRegisterOTP'));
@@ -20,17 +23,34 @@ const Categories = lazy(() => import('./pages/Categories'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Placeholders for other routes mentioned in prompt
-const Wishlist = () => <div className="p-8 text-center"><h1 className="text-2xl text-textPrimary">Wishlist</h1></div>;
-const Cart = () => <div className="p-8 text-center"><h1 className="text-2xl text-textPrimary">Cart</h1></div>;
-const Profile = () => <div className="p-8 text-center"><h1 className="text-2xl text-textPrimary">Profile</h1></div>;
-const About = () => <div className="p-8 text-center"><h1 className="text-2xl text-textPrimary">About Us</h1></div>;
-const Contact = () => <div className="p-8 text-center"><h1 className="text-2xl text-textPrimary">Contact</h1></div>;
+const Wishlist = lazy(() => import('./pages/Wishlist'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
+const Profile = lazy(() => import('./pages/Profile'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+
+const AdminRouteWrapper = () => {
+  const { isAuthenticated, loading, user } = useAuth();
+  
+  if (loading) return <LoadingSpinner fullScreen />;
+  
+  if (!isAuthenticated || (user?.role !== 'ADMIN' && user?.role !== 'ROLE_ADMIN')) {
+    return <AdminLogin />;
+  }
+  
+  return <AdminDashboard />;
+};
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Suspense fallback={<LoadingSpinner fullScreen />}>
+      <WishlistProvider>
+        <Router>
+          <Suspense fallback={<LoadingSpinner fullScreen />}>
           <Routes>
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
@@ -45,20 +65,22 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:id" element={<Shop />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/wishlist" element={<Wishlist />} />
               
               {/* Protected Routes */}
-              <Route path="/wishlist" element={
-                <ProtectedRoute>
-                  <Wishlist />
-                </ProtectedRoute>
-              } />
               <Route path="/cart" element={
                 <ProtectedRoute>
                   <Cart />
+                </ProtectedRoute>
+              } />
+              <Route path="/checkout" element={
+                <ProtectedRoute>
+                  <Checkout />
                 </ProtectedRoute>
               } />
               <Route path="/profile" element={
@@ -66,7 +88,15 @@ function App() {
                   <Profile />
                 </ProtectedRoute>
               } />
+              <Route path="/orders" element={
+                <ProtectedRoute>
+                  <Orders />
+                </ProtectedRoute>
+              } />
             </Route>
+
+            {/* Admin Routes without MainLayout */}
+            <Route path="/admin" element={<AdminRouteWrapper />} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
@@ -86,6 +116,7 @@ function App() {
         theme="dark"
         toastClassName="bg-card text-textPrimary border border-border shadow-soft rounded-lg"
       />
+      </WishlistProvider>
     </AuthProvider>
   );
 }

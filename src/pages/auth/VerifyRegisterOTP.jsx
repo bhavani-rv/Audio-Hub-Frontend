@@ -13,25 +13,22 @@ const VerifyRegisterOTP = () => {
   const navigate = useNavigate();
   const { tempIdentifier } = useAuth();
 
-  useEffect(() => {
-    if (!tempIdentifier) {
-      navigate('/register');
-    }
-  }, [tempIdentifier, navigate]);
+  const [emailInput, setEmailInput] = useState(tempIdentifier || '');
 
-  if (!tempIdentifier) return null;
+  // Removed the useEffect that redirects to /register
 
   const maskEmail = (email) => {
+    if (!email || !email.includes('@')) return email;
     const [name, domain] = email.split('@');
     return `${name.substring(0, 2)}*****@${domain}`;
   };
 
   const handleVerify = async (otp) => {
-    if (otp.length !== 6) return;
+    if (otp.length !== 6 || !emailInput) return;
     
     setIsLoading(true);
     try {
-      await authService.verifyRegisterOtp({ email: tempIdentifier, otp });
+      await authService.verifyRegisterOtp({ email: emailInput, otp });
       toast.success('Registration successful! Please login.');
       navigate('/login');
     } catch (error) {
@@ -42,8 +39,9 @@ const VerifyRegisterOTP = () => {
   };
 
   const handleResend = async () => {
+    if (!emailInput) return;
     try {
-      await authService.resendOtp({ email: tempIdentifier, type: 'REGISTER' });
+      await authService.resendOtp({ email: emailInput, type: 'REGISTER' });
       toast.success('OTP resent successfully.');
       setCanResend(false);
     } catch {
@@ -54,8 +52,18 @@ const VerifyRegisterOTP = () => {
   return (
     <AuthLayout title="Verify Email" subtitle="Complete your registration">
       <div className="text-center mb-6">
-        <p className="text-textSecondary text-sm mb-2">We've sent a 6-digit code to:</p>
-        <p className="text-primary font-medium">{maskEmail(tempIdentifier)}</p>
+        <p className="text-textSecondary text-sm mb-2">We've sent a 6-digit code to your email.</p>
+        {!tempIdentifier ? (
+          <input
+            type="email"
+            value={emailInput}
+            onChange={(e) => setEmailInput(e.target.value)}
+            placeholder="Enter your email address"
+            className="w-full px-4 py-2 mt-2 bg-background border border-border rounded-lg text-textPrimary focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        ) : (
+          <p className="text-primary font-medium">{maskEmail(tempIdentifier)}</p>
+        )}
       </div>
 
       <OTPInput length={6} onComplete={handleVerify} />

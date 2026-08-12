@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiUser, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import AuthLayout from '../../layouts/AuthLayout';
@@ -8,7 +8,7 @@ import Button from '../../components/common/Button';
 import authService from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 
-const Login = () => {
+const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,15 +33,16 @@ const Login = () => {
     try {
       const response = await authService.login({ username, password });
       
-      // Step 2: Store identifier in context and redirect
+      if (response.role !== 'ROLE_ADMIN' && response.role !== 'ADMIN') {
+        toast.error('Access denied. Admin privileges required.');
+        setIsLoading(false);
+        return;
+      }
+
       const userObj = { username: response.username, role: response.role };
       loginSuccess(response.accessToken, userObj);
-      toast.success('Login successful!');
-      if (response.role === 'ROLE_ADMIN' || response.role === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      toast.success('Admin Login successful!');
+      navigate('/admin');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Invalid credentials. Please try again.');
     } finally {
@@ -50,13 +51,13 @@ const Login = () => {
   };
 
   return (
-    <AuthLayout title="Welcome Back" subtitle="Sign in to your Audio Hub account">
+    <AuthLayout title="Admin Portal" subtitle="Secure access for authorized personnel only">
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
           id="username"
-          label="Username"
+          label="Admin Username"
           type="text"
-          placeholder="Enter your username"
+          placeholder="Enter admin username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           error={errors.username}
@@ -76,48 +77,19 @@ const Login = () => {
           />
           <button
             type="button"
-            className="absolute right-3 top-[38px] text-textSecondary hover:text-textPrimary"
+            className="absolute right-3 top-[38px] text-textSecondary hover:text-textPrimary cursor-pointer"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
           </button>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 rounded border-border bg-surface text-primary focus:ring-primary focus:ring-offset-background"
-            />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-textSecondary">
-              Remember me
-            </label>
-          </div>
-
-          <div className="text-sm">
-            <Link to="/forgot-password" className="font-medium text-primary hover:text-primary/80 transition-colors">
-              Forgot password?
-            </Link>
-          </div>
-        </div>
-
-        <Button type="submit" fullWidth isLoading={isLoading}>
-          Sign in
+        <Button type="submit" fullWidth isLoading={isLoading} className="bg-red-600 hover:bg-red-700 text-white shadow-none hover:shadow-glow focus:ring-red-500">
+          Sign in to Admin Panel
         </Button>
       </form>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-textSecondary">
-          Don't have an account?{' '}
-          <Link to="/register" className="font-medium text-primary hover:text-primary/80 transition-colors">
-            Create an account
-          </Link>
-        </p>
-      </div>
     </AuthLayout>
   );
 };
 
-export default Login;
+export default AdminLogin;

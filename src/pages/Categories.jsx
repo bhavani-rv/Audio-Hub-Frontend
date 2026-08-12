@@ -52,39 +52,46 @@ const Categories = () => {
         </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden bg-card border border-border/50 shadow-soft hover:shadow-glow hover:border-primary/50 transition-all duration-500 cursor-pointer h-[400px]"
-            >
-              <div className="absolute inset-0 w-full h-full">
-                <img 
-                  src={category.image} 
-                  alt={category.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-80" 
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent p-8 flex flex-col justify-end">
-                <motion.div
-                  initial={{ y: 20 }}
-                  whileHover={{ y: 0 }}
-                  className="relative z-10"
-                >
-                  <h3 className="text-2xl font-bold text-textPrimary mb-3">{category.name}</h3>
-                  <p className="text-textSecondary mb-6 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    {category.description}
-                  </p>
-                  
-                  <Link to={`/shop?category=${encodeURIComponent(category.name)}`} className="inline-flex items-center gap-2 text-primary font-medium hover:text-white transition-colors group-hover:opacity-100 opacity-0 transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100">
-                    Shop Collection <FiArrowRight />
-                  </Link>
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
+          {categories.map((category, index) => {
+            const id = category.categoryId || category.id;
+            const name = category.categoryName || category.name;
+            const image = category.image || `https://via.placeholder.com/400x500?text=${encodeURIComponent(name)}`;
+            const description = category.description || `Explore our ${name} collection`;
+
+            return (
+              <motion.div
+                key={id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="group relative rounded-3xl overflow-hidden bg-card border border-border/50 shadow-soft hover:shadow-glow hover:border-primary/50 transition-all duration-500 cursor-pointer h-[400px]"
+              >
+                <div className="absolute inset-0 w-full h-full">
+                  <img 
+                    src={image} 
+                    alt={name} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-80" 
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent p-8 flex flex-col justify-end">
+                  <motion.div
+                    initial={{ y: 20 }}
+                    whileHover={{ y: 0 }}
+                    className="relative z-10"
+                  >
+                    <h3 className="text-2xl font-bold text-textPrimary mb-3">{name}</h3>
+                    <p className="text-textSecondary mb-6 line-clamp-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      {description}
+                    </p>
+                    
+                    <Link to={`/shop?category=${encodeURIComponent(name)}`} className="inline-flex items-center gap-2 text-primary font-medium hover:text-white transition-colors group-hover:opacity-100 opacity-0 transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100">
+                      Shop Collection <FiArrowRight />
+                    </Link>
+                  </motion.div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>
