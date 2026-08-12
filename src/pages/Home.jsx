@@ -10,7 +10,6 @@ import { mockBrands, mockTestimonials } from '../data/mockData';
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,8 +22,6 @@ const Home = () => {
         setCategories(categoriesData);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
@@ -54,7 +51,7 @@ const Home = () => {
                 Experience <span className="text-primary">Premium Sound</span> Like Never Before
               </h1>
               <p className="text-lg text-textSecondary mb-8 max-w-xl">
-                Discover our curated collection of audiophile-grade headsets. Elevate your gaming, studio work, and daily listening with uncompromised audio quality.
+                Discover our curated collection of audiophile-grade gear. Elevate your gaming, studio work, and daily listening with uncompromised audio quality.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/shop">
@@ -79,7 +76,7 @@ const Home = () => {
               <div className="relative rounded-2xl overflow-hidden aspect-square max-w-md mx-auto shadow-glow">
                 <img 
                   src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800" 
-                  alt="Premium Headset" 
+                  alt="Premium Audio Gear" 
                   className="object-cover w-full h-full"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
@@ -95,7 +92,7 @@ const Home = () => {
           <div className="flex justify-between items-end mb-10">
             <div>
               <h2 className="text-3xl font-bold text-textPrimary">Shop by Category</h2>
-              <p className="text-textSecondary mt-2">Find the perfect headset for your needs</p>
+              <p className="text-textSecondary mt-2">Find the perfect audio gear for your needs</p>
             </div>
             <Link to="/categories" className="hidden sm:flex text-primary hover:text-primary/80 items-center gap-1 font-medium">
               View All <FiArrowRight />
@@ -132,7 +129,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-textPrimary">Featured Products</h2>
-            <p className="text-textSecondary mt-2">Handpicked selection of our top-rated headsets</p>
+            <p className="text-textSecondary mt-2">Handpicked selection of our top-rated audio equipment</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

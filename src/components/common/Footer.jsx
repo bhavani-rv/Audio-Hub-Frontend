@@ -16,7 +16,7 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-textSecondary mb-6 max-w-sm">
-              Experience premium sound like never before. We offer the best selection of gaming, studio, and noise-cancelling headsets for audiophiles and professionals.
+              Experience premium sound like never before. We offer the best selection of gaming, studio, and noise-cancelling headphones for audiophiles and professionals.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-textSecondary hover:text-primary hover:bg-surface border border-transparent hover:border-primary transition-all">

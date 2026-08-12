@@ -49,7 +49,7 @@ const VerifyResetOTP = () => {
       await authService.resendOtp({ email: tempIdentifier, type: 'RESET' });
       toast.success('OTP resent successfully.');
       setCanResend(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to resend OTP. Please try again later.');
     }
   };

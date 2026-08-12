@@ -82,5 +82,5 @@ export const mockBrands = [
 export const mockTestimonials = [
   { id: 1, name: 'Alex Johnson', rating: 5, review: 'The sound quality is absolutely phenomenal. Best purchase I made this year!', photo: 'https://randomuser.me/api/portraits/men/32.jpg' },
   { id: 2, name: 'Sarah Williams', rating: 5, review: 'Fast delivery and premium packaging. The noise cancellation on these is surreal.', photo: 'https://randomuser.me/api/portraits/women/44.jpg' },
-  { id: 3, name: 'Michael Chen', rating: 4, review: 'Great selection of professional headsets. The customer support was also very helpful.', photo: 'https://randomuser.me/api/portraits/men/68.jpg' },
+  { id: 3, name: 'Michael Chen', rating: 4, review: 'Great selection of professional headphones. The customer support was also very helpful.', photo: 'https://randomuser.me/api/portraits/men/68.jpg' },
 ];

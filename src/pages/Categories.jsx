@@ -47,7 +47,7 @@ const Categories = () => {
             Explore <span className="text-primary">Categories</span>
           </h1>
           <p className="text-lg text-textSecondary">
-            Find the perfect headset for your lifestyle. Whether you're a hardcore gamer, an audiophile, or an active runner, we've got you covered.
+            Find the perfect audio gear for your lifestyle. Whether you're a hardcore gamer, an audiophile, or an active runner, we've got you covered.
           </p>
         </motion.div>
         

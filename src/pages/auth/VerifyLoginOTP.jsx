@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AuthLayout from '../../layouts/AuthLayout';
 import OTPInput from '../../components/common/OTPInput';
 import CountdownTimer from '../../components/common/CountdownTimer';
-import Button from '../../components/common/Button';
 import authService from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 
@@ -45,7 +44,7 @@ const VerifyLoginOTP = () => {
       await authService.resendOtp({ username: tempIdentifier, type: 'LOGIN' });
       toast.success('OTP resent successfully.');
       setCanResend(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to resend OTP. Please try again later.');
     }
   };
